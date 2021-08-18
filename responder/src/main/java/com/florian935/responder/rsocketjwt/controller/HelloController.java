@@ -51,13 +51,11 @@ public class HelloController {
     }
 
     @MessageMapping("channel")
-    Flux<List<HelloResponse>> requestChannel(Flux<HelloRequests> requests) {
+    Flux<HelloResponse> requestChannel(@Payload Flux<HelloRequest> requests) {
 
         return Flux.from(requests)
                 .doOnNext(message -> log.info(">> [Request-Channel] data:{}", message))
-                .map(message -> message.getIds().stream()
-                        .map(this::getHello)
-                        .toList());
+                .map(message -> getHello(message.getId()));
     }
 
     private HelloResponse getHello(String id) {
