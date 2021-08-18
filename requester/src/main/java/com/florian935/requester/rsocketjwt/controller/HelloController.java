@@ -4,57 +4,48 @@ import com.florian935.requester.rsocketjwt.domain.Credentials;
 import com.florian935.requester.rsocketjwt.domain.HelloRequest;
 import com.florian935.requester.rsocketjwt.domain.HelloResponse;
 import com.florian935.requester.rsocketjwt.domain.HelloUser;
+import com.florian935.requester.rsocketjwt.utils.MimeTypeProperties;
 import com.florian935.requester.rsocketjwt.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.util.MimeType;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static com.florian935.requester.rsocketjwt.domain.HelloRole.USER;
+import java.util.Map;
+
+import static com.florian935.requester.rsocketjwt.utils.MimeTypeProperties.BEARER_MIMETYPE;
 import static lombok.AccessLevel.PRIVATE;
 
 @RestController
-@RequestMapping("/api/v1.0")
+@RequestMapping("/api/v1.0/rsocket")
 @RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE)
 public class HelloController {
 
     final RSocketRequester rSocketRequester;
-    final TokenUtils tokenUtils;
-    final MimeType mimeType = MimeType.valueOf("message/x.rsocket.authentication.bearer.v0");
-    String token;
 
-    @GetMapping("signin")
-    Mono<String> signIn(@RequestBody Credentials credentials) {
-
-        final HelloUser user = HelloUser.builder()
-                .userId(credentials.getLogin())
-                .password(credentials.getPassword())
-                .role(credentials.getRole())
-                .build();
-        token = tokenUtils.generateAccessToken(user).getToken();
-
-        return Mono.just("Logged successfully !");
-    }
-
-    @GetMapping("fire-and-forget")
-    Mono<Void> fireAndForget() {
+    @GetMapping("fire-and-forget/{id}")
+    Mono<Void> fireAndForget(@RequestHeader("Authorization") String token,
+                             @PathVariable String id) {
 
         return rSocketRequester
                 .route("fire-and-forget")
-                .metadata(token, mimeType)
-                .data(new HelloRequest("0"))
+                .metadata(token, BEARER_MIMETYPE)
+                .data(new HelloRequest(id))
                 .send();
     }
 
     @GetMapping("request-response")
-    Mono<HelloResponse> requestResponse(@RequestBody HelloRequest helloRequest) {
+    Mono<HelloResponse> requestResponse(@RequestHeader("Authorization") String token,
+                                        @RequestBody HelloRequest helloRequest) {
 
         return rSocketRequester
                 .route("request-response")
-                .metadata(token, mimeType)
+                .metadata(token, BEARER_MIMETYPE)
                 .data(helloRequest)
                 .retrieveMono(HelloResponse.class);
     }
