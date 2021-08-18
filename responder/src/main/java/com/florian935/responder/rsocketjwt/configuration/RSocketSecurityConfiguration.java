@@ -9,11 +9,9 @@ import org.springframework.messaging.rsocket.RSocketStrategies;
 import org.springframework.messaging.rsocket.annotation.support.RSocketMessageHandler;
 import org.springframework.security.config.annotation.rsocket.EnableRSocketSecurity;
 import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
+import org.springframework.security.messaging.handler.invocation.reactive.AuthenticationPrincipalArgumentResolver;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtReactiveAuthenticationManager;
-import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.oauth2.server.resource.authentication.*;
 import org.springframework.security.rsocket.core.PayloadSocketAcceptorInterceptor;
 
 import static com.florian935.responder.rsocketjwt.domain.HelloRole.ADMIN;
@@ -70,8 +68,9 @@ public class RSocketSecurityConfiguration {
 
         RSocketMessageHandler rSocketMessageHandler = new RSocketMessageHandler();
         rSocketMessageHandler.getArgumentResolverConfigurer().addCustomResolver(
-                new org.springframework.security.messaging.handler.invocation.reactive.AuthenticationPrincipalArgumentResolver());
+                new AuthenticationPrincipalArgumentResolver());
         rSocketMessageHandler.setRSocketStrategies(strategies);
+
         return rSocketMessageHandler;
     }
 }
