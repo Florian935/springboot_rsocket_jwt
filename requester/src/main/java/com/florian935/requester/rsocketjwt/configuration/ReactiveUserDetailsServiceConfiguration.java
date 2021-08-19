@@ -2,8 +2,10 @@ package com.florian935.requester.rsocketjwt.configuration;
 
 import com.florian935.requester.rsocketjwt.domain.HelloUser;
 import com.florian935.requester.rsocketjwt.service.AuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -14,8 +16,15 @@ import java.util.List;
 @Configuration
 public class ReactiveUserDetailsServiceConfiguration {
 
+    private final AuthenticationService authenticationService;
+
+    public ReactiveUserDetailsServiceConfiguration(@Lazy AuthenticationService authenticationService) {
+
+        this.authenticationService = authenticationService;
+    }
+
     @Bean
-    ReactiveUserDetailsService reactiveUserDetailsService(AuthenticationService authenticationService) {
+    ReactiveUserDetailsService reactiveUserDetailsService() {
 
         return username -> authenticationService
                 .findByUsername(username)
