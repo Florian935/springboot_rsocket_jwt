@@ -20,8 +20,8 @@ import static lombok.AccessLevel.PRIVATE;
 public class TokenUtils {
 
     static long ACCESS_EXPIRE = 15;
-    static String ACCESS_SECRET_KEY = "and0X3Rva2VuLWJhc2VkX29wZW5hcGlfZm9yX3Jzb2NrZXRfYWNjZXNzX3Rva2Vu";
-    static Algorithm ACCESS_ALGORITHM = Algorithm.HMAC256(ACCESS_SECRET_KEY);
+    static String ACCESS_SECRET_KEY = "dfg39wLJ92kdI29084JJQjhsj98ksdfKSJnk91Kkjb87GGb898nbBbBBBbsdfkze2KFjksdfDNFSK";
+    static Algorithm ACCESS_ALGORITHM = Algorithm.HMAC512(ACCESS_SECRET_KEY);
 
     public UserToken generateToken(HelloUser user,
                                    Algorithm algorithm,
