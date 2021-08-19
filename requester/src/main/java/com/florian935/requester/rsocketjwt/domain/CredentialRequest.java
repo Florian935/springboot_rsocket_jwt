@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 @Data
 @Builder
 @FieldDefaults(level = PRIVATE)
-public class Credentials {
+public class CredentialRequest {
 
     String login;
     String password;
