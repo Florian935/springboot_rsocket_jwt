@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,6 +34,7 @@ public class HelloController {
         return Mono.empty();
     }
 
+    @PreAuthorize("hasRole('USER')")
     @MessageMapping("request-response.{id}")
     Mono<HelloResponse> requestAndResponse(@DestinationVariable String id) {
         log.info(" >> [Request-Response] data: {}", id);
@@ -40,6 +42,7 @@ public class HelloController {
         return Mono.just(getHello(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @MessageMapping("request-stream")
     Flux<HelloResponse> requestStream(@Payload HelloRequests helloRequests) {
 
@@ -51,6 +54,7 @@ public class HelloController {
                 .map(this::getHello);
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @MessageMapping("channel")
     Flux<HelloResponse> requestChannel(@Payload Flux<HelloRequest> requests) {
 
