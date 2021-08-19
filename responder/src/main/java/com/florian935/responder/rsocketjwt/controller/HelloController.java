@@ -54,7 +54,7 @@ public class HelloController {
     Flux<HelloResponse> requestChannel(@Payload Flux<HelloRequest> requests) {
 
         return Flux.from(requests)
-                .doOnNext(message -> log.info(">> [Request-Channel] data:{}", message))
+                .doOnNext(message -> log.info(">> [Request-Channel] data: {}", message))
                 .map(message -> getHello(message.getId()));
     }
 

@@ -1,24 +1,19 @@
 package com.florian935.requester.rsocketjwt.controller;
 
-import com.florian935.requester.rsocketjwt.domain.Credentials;
 import com.florian935.requester.rsocketjwt.domain.HelloRequest;
+import com.florian935.requester.rsocketjwt.domain.HelloRequests;
 import com.florian935.requester.rsocketjwt.domain.HelloResponse;
-import com.florian935.requester.rsocketjwt.domain.HelloUser;
-import com.florian935.requester.rsocketjwt.utils.MimeTypeProperties;
-import com.florian935.requester.rsocketjwt.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.rsocket.RSocketRequester;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 import static com.florian935.requester.rsocketjwt.utils.MimeTypeProperties.BEARER_MIMETYPE;
 import static lombok.AccessLevel.PRIVATE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
 
 @RestController
 @RequestMapping("/api/v1.0/rsocket")
@@ -39,7 +34,7 @@ public class HelloController {
                 .send();
     }
 
-    @GetMapping("request-response")
+    @GetMapping(path = "request-response", produces = APPLICATION_JSON_VALUE)
     Mono<HelloResponse> requestResponse(@RequestHeader("Authorization") String token,
                                         @RequestBody HelloRequest helloRequest) {
 
@@ -48,5 +43,33 @@ public class HelloController {
                 .metadata(token, BEARER_MIMETYPE)
                 .data(helloRequest)
                 .retrieveMono(HelloResponse.class);
+    }
+
+    @GetMapping(path = "request-stream", produces = TEXT_EVENT_STREAM_VALUE)
+    Flux<HelloResponse> requestStream(@RequestHeader("Authorization") String token,
+                                      @RequestBody HelloRequests helloRequests) {
+
+        return rSocketRequester
+                .route("request-stream")
+                .metadata(token, BEARER_MIMETYPE)
+                .data(helloRequests)
+                .retrieveFlux(HelloResponse.class);
+    }
+
+    @GetMapping(path = "channel", produces = TEXT_EVENT_STREAM_VALUE)
+    Flux<HelloResponse> requestChannel(@RequestHeader("Authorization") String token) {
+
+        final Flux<HelloRequest> requestFlux = Flux.just(
+                new HelloRequest("0"),
+                new HelloRequest("1"),
+                new HelloRequest("2"),
+                new HelloRequest("3")
+        );
+
+        return rSocketRequester
+                .route("channel")
+                .metadata(token, BEARER_MIMETYPE)
+                .data(requestFlux)
+                .retrieveFlux(HelloResponse.class);
     }
 }
