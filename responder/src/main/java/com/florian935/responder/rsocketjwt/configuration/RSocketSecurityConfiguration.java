@@ -60,6 +60,7 @@ public class RSocketSecurityConfiguration {
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         authenticationManager.setJwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(authenticationConverter));
+
         return authenticationManager;
     }
 
