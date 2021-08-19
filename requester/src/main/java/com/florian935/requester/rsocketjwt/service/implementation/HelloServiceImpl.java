@@ -34,8 +34,10 @@ public class HelloServiceImpl implements HelloService {
     @Override
     public Mono<HelloResponse> requestResponse(String token, HelloRequest helloRequest) {
 
+        final String route = String.format("request-response.%s", helloRequest.getId());
+
         return rSocketRequester
-                .route("request-response")
+                .route(route)
                 .metadata(token, BEARER_MIMETYPE)
                 .data(helloRequest)
                 .retrieveMono(HelloResponse.class);

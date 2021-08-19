@@ -15,7 +15,6 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 public class CredentialRequest {
 
-    String login;
+    String username;
     String password;
-    String role;
 }

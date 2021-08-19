@@ -5,6 +5,7 @@ import com.florian935.responder.rsocketjwt.domain.HelloRequests;
 import com.florian935.responder.rsocketjwt.domain.HelloResponse;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
@@ -32,10 +33,10 @@ public class HelloController {
         return Mono.empty();
     }
 
-    @MessageMapping("request-response")
-    Mono<HelloResponse> requestAndResponse(@Payload HelloRequest helloRequest) {
-        log.info(" >> [Request-Response] data: {}", helloRequest);
-        String id = helloRequest.getId();
+    @MessageMapping("request-response.{id}")
+    Mono<HelloResponse> requestAndResponse(@DestinationVariable String id) {
+        log.info(" >> [Request-Response] data: {}", id);
+
         return Mono.just(getHello(id));
     }
 

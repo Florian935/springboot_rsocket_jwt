@@ -33,7 +33,7 @@ public class RSocketSecurityConfiguration {
                 .authorizePayload(authorize -> authorize
                         .setup().permitAll()
                         .route("fire-and-forget").authenticated()
-                        .route("request-response").hasRole(USER)
+                        .route("request-response.{id}").hasRole(USER)
                         .route("request-stream").hasRole(ADMIN)
                         .route("channel").hasAnyRole(USER, ADMIN)
                         .anyRequest().authenticated()

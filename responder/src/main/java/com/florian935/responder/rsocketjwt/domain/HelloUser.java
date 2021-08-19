@@ -16,6 +16,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class HelloUser {
 
     String userId;
+    String username;
     String password;
     String role;
 }

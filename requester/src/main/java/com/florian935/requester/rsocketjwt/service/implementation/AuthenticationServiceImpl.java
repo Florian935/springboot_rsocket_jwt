@@ -3,13 +3,19 @@ package com.florian935.requester.rsocketjwt.service.implementation;
 import com.florian935.requester.rsocketjwt.domain.CredentialRequest;
 import com.florian935.requester.rsocketjwt.domain.CredentialResponse;
 import com.florian935.requester.rsocketjwt.domain.HelloUser;
+import com.florian935.requester.rsocketjwt.repository.UserRepository;
 import com.florian935.requester.rsocketjwt.service.AuthenticationService;
-import com.florian935.requester.rsocketjwt.utils.TokenUtils;
+import com.florian935.requester.rsocketjwt.security.jwt.utils.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.messaging.rsocket.RSocketRequester;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -18,19 +24,45 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    RSocketRequester rSocketRequester;
     TokenUtils tokenUtils;
+    UserRepository userRepository;
+    ReactiveAuthenticationManager reactiveAuthenticationManager;
 
     @Override
     public Mono<CredentialResponse> authenticate(CredentialRequest credential) {
 
+        return Mono.just(credential)
+                .flatMap(this::processAuthentication)
+                .filter(Objects::nonNull)
+                .map(authentication -> credential.getUsername())
+                .flatMap(this::findByUsername)
+                .map(u -> buildUser(u, credential));
+    }
+
+    @Override
+    public Mono<HelloUser> findByUsername(String username) {
+
+        return userRepository.findByUsername(username);
+    }
+
+    private Mono<Authentication> processAuthentication(CredentialRequest credential) {
+
+        return reactiveAuthenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(credential.getUsername(), credential.getPassword())
+        );
+    }
+
+    private CredentialResponse buildUser(HelloUser helloUser, CredentialRequest credential) {
+
         final HelloUser user = HelloUser.builder()
-                .userId(credential.getLogin())
+                .userId(helloUser.getUserId())
+                .username(credential.getUsername())
                 .password(credential.getPassword())
-                .role(credential.getRole())
+                .role(helloUser.getRole())
                 .build();
+
         final String token = tokenUtils.generateAccessToken(user).getToken();
 
-        return Mono.just(new CredentialResponse(token));
+        return new CredentialResponse(token);
     }
 }
