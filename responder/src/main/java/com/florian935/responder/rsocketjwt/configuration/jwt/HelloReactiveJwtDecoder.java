@@ -2,6 +2,7 @@ package com.florian935.responder.rsocketjwt.configuration.jwt;
 
 import com.auth0.jwt.JWT;
 import com.florian935.responder.rsocketjwt.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -13,18 +14,12 @@ import reactor.core.publisher.Mono;
 import static lombok.AccessLevel.PRIVATE;
 
 @Configuration
+@RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class HelloReactiveJwtDecoder implements ReactiveJwtDecoder {
 
     ReactiveJwtDecoder reactiveJwtDecoder;
     UserService userService;
-
-    public HelloReactiveJwtDecoder(@Qualifier("reactiveJwtDecoder") ReactiveJwtDecoder reactiveJwtDecoder,
-                                   UserService userService) {
-
-        this.reactiveJwtDecoder = reactiveJwtDecoder;
-        this.userService = userService;
-    }
 
     @Override
     public Mono<Jwt> decode(String token) throws JwtException {
