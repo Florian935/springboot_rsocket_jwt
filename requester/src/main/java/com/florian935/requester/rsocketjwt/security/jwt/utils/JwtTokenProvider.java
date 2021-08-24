@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 import static java.time.temporal.ChronoUnit.MINUTES;
 import static lombok.AccessLevel.PRIVATE;
@@ -70,21 +71,26 @@ public class JwtTokenProvider {
 
     public Authentication getAuthenticationFromToken(String token) {
 
-        final String username = extractClaimFromToken(token, JWT_USERNAME);
+        final String username = extractClaimFromToken(token, JWT_USERNAME, extractorClaimFunctionAsString());
         final Collection<? extends GrantedAuthority> authorities = getAuthoritiesFromToken(token);
         final User principal = new User(username, StringUtil.EMPTY_STRING, authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    private String extractClaimFromToken(String token, String claimName) {
+    private BiFunction<String, String, String> extractorClaimFunctionAsString() {
 
-        return JWT.decode(token).getClaim(claimName).asString();
+        return (jwt, claimName) -> JWT.decode(jwt).getClaim(claimName).asString();
+    }
+
+    private <T> T extractClaimFromToken(String token, String claimName, BiFunction<String, String, T> extractor) {
+
+        return extractor.apply(token, claimName);
     }
 
     private Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) {
 
-        final String role = extractClaimFromToken(token, JWT_ROLE_NAME);
+        final String role = extractClaimFromToken(token, JWT_ROLE_NAME, extractorClaimFunctionAsString());
 
         return List.of(new SimpleGrantedAuthority(ROLE_PREFIX + role));
     }
