@@ -24,15 +24,11 @@ import static lombok.AccessLevel.PRIVATE;
 @Configuration
 @EnableRSocketSecurity
 @EnableReactiveMethodSecurity
+@RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class RSocketSecurityConfiguration {
 
     HelloReactiveJwtDecoder helloReactiveJwtDecoder;
-
-    public RSocketSecurityConfiguration(@Qualifier("helloReactiveJwtDecoder") HelloReactiveJwtDecoder helloReactiveJwtDecoder) {
-
-        this.helloReactiveJwtDecoder = helloReactiveJwtDecoder;
-    }
 
     @Bean
     PayloadSocketAcceptorInterceptor authorization(RSocketSecurity rSocketSecurity) {
