@@ -1,11 +1,16 @@
 package com.florian935.requester.rsocketjwt;
 
+import com.florian935.requester.rsocketjwt.domain.HelloUser;
 import com.florian935.requester.rsocketjwt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.UUID;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -24,13 +29,21 @@ public class Application {
 //    @EventListener(ApplicationReadyEvent.class)
 //    public void init() {
 //
-//        final HelloUser helloUser = HelloUser.builder()
+//        final HelloUser admin = HelloUser.builder()
 //                .userId(UUID.randomUUID().toString())
 //                .username("admin")
 //                .password(passwordEncoder.encode("pass"))
 //                .role("ADMIN")
 //                .build();
 //
-//        userRepository.save(helloUser).subscribe();
+//        final HelloUser user = HelloUser.builder()
+//                .userId(UUID.randomUUID().toString())
+//                .username("admin")
+//                .password(passwordEncoder.encode("pass"))
+//                .role("USER")
+//                .build();
+//
+//        userRepository.save(admin).subscribe();
+//        userRepository.save(user).subscribe();
 //    }
 }

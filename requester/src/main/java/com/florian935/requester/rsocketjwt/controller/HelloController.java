@@ -3,7 +3,6 @@ package com.florian935.requester.rsocketjwt.controller;
 import com.florian935.requester.rsocketjwt.domain.HelloRequest;
 import com.florian935.requester.rsocketjwt.domain.HelloRequests;
 import com.florian935.requester.rsocketjwt.domain.HelloResponse;
-import com.florian935.requester.rsocketjwt.security.jwt.filter.JwtTokenAuthenticationFilter;
 import com.florian935.requester.rsocketjwt.service.HelloService;
 import com.florian935.requester.rsocketjwt.utils.TypeConverter;
 import lombok.RequiredArgsConstructor;
