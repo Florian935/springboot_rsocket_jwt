@@ -37,7 +37,7 @@ public class JwtTokenProvider {
     static String ACCESS_SECRET_KEY = "dfg39wLJ92kdI29084JJQjhsj98ksdfKSJnk91Kkjb87GGb898nbBbBBBbsdfkze2KFjksdfDNFSK";
     static Algorithm ACCESS_ALGORITHM = Algorithm.HMAC512(ACCESS_SECRET_KEY);
 
-    public UserToken generateAccessToken(HelloUser user) {
+    public UserToken generateToken(HelloUser user) {
 
         final String tokenId = UUID.randomUUID().toString();
         final String token = buildToken(user, tokenId);

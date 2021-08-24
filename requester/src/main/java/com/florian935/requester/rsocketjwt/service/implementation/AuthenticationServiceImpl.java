@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(helloUser.getRole())
                 .build();
 
-        final String token = jwtTokenProvider.generateAccessToken(user).getToken();
+        final String token = jwtTokenProvider.generateToken(user).getToken();
 
         return new CredentialResponse(token);
     }

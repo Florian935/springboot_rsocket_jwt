@@ -39,7 +39,6 @@ public class HelloServiceImpl implements HelloService {
         return rSocketRequester
                 .route(route)
                 .metadata(token, BEARER_MIMETYPE)
-                .data(helloRequest)
                 .retrieveMono(HelloResponse.class);
     }
 
