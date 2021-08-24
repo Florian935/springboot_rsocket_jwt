@@ -28,6 +28,8 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class TokenUtils {
 
+    static String JWT_ROLE_NAME = "roles";
+    static String ROLE_PREFIX = "ROLE_";
     static long ACCESS_EXPIRE = 15;
     static String ACCESS_SECRET_KEY = "dfg39wLJ92kdI29084JJQjhsj98ksdfKSJnk91Kkjb87GGb898nbBbBBBbsdfkze2KFjksdfDNFSK";
     static Algorithm ACCESS_ALGORITHM = Algorithm.HMAC512(ACCESS_SECRET_KEY);
@@ -51,7 +53,7 @@ public class TokenUtils {
         String token = JWT.create()
                 .withJWTId(tokenId)
                 .withSubject(user.getUserId())
-                .withClaim("role", user.getRole())
+                .withClaim(JWT_ROLE_NAME, user.getRole())
                 .withClaim("username", user.getUsername())
                 .withExpiresAt(Date.from(instant))
                 .sign(algorithm);
@@ -81,7 +83,7 @@ public class TokenUtils {
     public Authentication getAuthenticationFromToken(String token) {
 
         final Collection<? extends GrantedAuthority> authorities =
-                List.of(new SimpleGrantedAuthority("ROLE_" + JWT.decode(token).getClaim("role").asString()));
+                List.of(new SimpleGrantedAuthority(ROLE_PREFIX + JWT.decode(token).getClaim("role").asString()));
 
         final User principal = new User(
                 JWT.decode(token).getClaim("username").asString(),

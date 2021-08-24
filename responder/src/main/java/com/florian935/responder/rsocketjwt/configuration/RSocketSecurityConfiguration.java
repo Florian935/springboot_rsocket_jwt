@@ -26,6 +26,8 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class RSocketSecurityConfiguration {
 
+    static String JWT_ROLE_NAME = "roles";
+    static String ROLE_PREFIX = "ROLE_";
     HelloReactiveJwtDecoder helloReactiveJwtDecoder;
 
     @Bean
@@ -58,11 +60,11 @@ public class RSocketSecurityConfiguration {
         JwtReactiveAuthenticationManager authenticationManager = new JwtReactiveAuthenticationManager(helloReactiveJwtDecoder);
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        grantedAuthoritiesConverter.setAuthorityPrefix(ROLE_PREFIX);
 
         // default authorities claim name is "scope", here we change to
         // "role" claim name to demonstrate that is possible to change it
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName(JWT_ROLE_NAME);
         authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         authenticationManager.setJwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(authenticationConverter));
 
