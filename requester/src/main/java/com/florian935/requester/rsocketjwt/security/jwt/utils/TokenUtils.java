@@ -51,7 +51,7 @@ public class TokenUtils {
         String token = JWT.create()
                 .withJWTId(tokenId)
                 .withSubject(user.getUserId())
-                .withClaim("scope", user.getRole())
+                .withClaim("role", user.getRole())
                 .withClaim("username", user.getUsername())
                 .withExpiresAt(Date.from(instant))
                 .sign(algorithm);

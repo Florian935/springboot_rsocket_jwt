@@ -59,6 +59,10 @@ public class RSocketSecurityConfiguration {
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+        // default authorities claim name is "scope", here we change to
+        // "role" claim name to demonstrate that is possible to change it
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("role");
         authenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         authenticationManager.setJwtAuthenticationConverter(new ReactiveJwtAuthenticationConverterAdapter(authenticationConverter));
 
