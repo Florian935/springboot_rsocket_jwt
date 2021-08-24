@@ -5,9 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import static lombok.AccessLevel.PRIVATE;
 
+@Document(collection = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -15,6 +18,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 public class HelloUser {
 
+    @Id
     String userId;
     String username;
     String password;

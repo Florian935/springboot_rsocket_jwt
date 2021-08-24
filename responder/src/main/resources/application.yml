@@ -2,3 +2,6 @@ spring:
   rsocket:
     server:
       port: 7000
+  data:
+    mongodb:
+      uri: mongodb://root:password@localhost:27018/jwt_rsocket
