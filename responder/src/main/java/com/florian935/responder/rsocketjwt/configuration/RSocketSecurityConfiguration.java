@@ -1,8 +1,9 @@
 package com.florian935.responder.rsocketjwt.configuration;
 
-import com.florian935.responder.rsocketjwt.utils.TokenUtils;
+import com.florian935.responder.rsocketjwt.configuration.jwt.HelloReactiveJwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.rsocket.RSocketStrategies;
@@ -12,21 +13,26 @@ import org.springframework.security.config.annotation.rsocket.EnableRSocketSecur
 import org.springframework.security.config.annotation.rsocket.RSocketSecurity;
 import org.springframework.security.messaging.handler.invocation.reactive.AuthenticationPrincipalArgumentResolver;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.*;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtReactiveAuthenticationManager;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.rsocket.core.PayloadSocketAcceptorInterceptor;
 
-import static com.florian935.responder.rsocketjwt.domain.HelloRole.ADMIN;
-import static com.florian935.responder.rsocketjwt.domain.HelloRole.USER;
 import static lombok.AccessLevel.PRIVATE;
 
 @Configuration
 @EnableRSocketSecurity
 @EnableReactiveMethodSecurity
-@RequiredArgsConstructor
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class RSocketSecurityConfiguration {
 
-    TokenUtils tokenUtils;
+    HelloReactiveJwtDecoder helloReactiveJwtDecoder;
+
+    public RSocketSecurityConfiguration(@Qualifier("helloReactiveJwtDecoder") HelloReactiveJwtDecoder helloReactiveJwtDecoder) {
+
+        this.helloReactiveJwtDecoder = helloReactiveJwtDecoder;
+    }
 
     @Bean
     PayloadSocketAcceptorInterceptor authorization(RSocketSecurity rSocketSecurity) {
@@ -47,21 +53,15 @@ public class RSocketSecurityConfiguration {
                                 .anyExchange().permitAll()
                 )
                 .jwt(jwtSpec -> {
-                    jwtSpec.authenticationManager(jwtReactiveAuthenticationManager(jwtDecoder()));
+                    jwtSpec.authenticationManager(jwtReactiveAuthenticationManager());
                 })
                 .build();
     }
 
     @Bean
-    public ReactiveJwtDecoder jwtDecoder() {
+    public JwtReactiveAuthenticationManager jwtReactiveAuthenticationManager() {
 
-        return tokenUtils.jwtAccessTokenDecoder();
-    }
-
-    @Bean
-    public JwtReactiveAuthenticationManager jwtReactiveAuthenticationManager(ReactiveJwtDecoder reactiveJwtDecoder) {
-
-        JwtReactiveAuthenticationManager authenticationManager = new JwtReactiveAuthenticationManager(reactiveJwtDecoder);
+        JwtReactiveAuthenticationManager authenticationManager = new JwtReactiveAuthenticationManager(helloReactiveJwtDecoder);
         JwtAuthenticationConverter authenticationConverter = new JwtAuthenticationConverter();
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
