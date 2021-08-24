@@ -5,10 +5,9 @@ import com.florian935.requester.rsocketjwt.domain.CredentialResponse;
 import com.florian935.requester.rsocketjwt.domain.HelloUser;
 import com.florian935.requester.rsocketjwt.repository.UserRepository;
 import com.florian935.requester.rsocketjwt.service.AuthenticationService;
-import com.florian935.requester.rsocketjwt.security.jwt.utils.TokenUtils;
+import com.florian935.requester.rsocketjwt.security.jwt.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +23,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    TokenUtils tokenUtils;
+    JwtTokenProvider jwtTokenProvider;
     UserRepository userRepository;
     ReactiveAuthenticationManager reactiveAuthenticationManager;
 
@@ -61,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(helloUser.getRole())
                 .build();
 
-        final String token = tokenUtils.generateAccessToken(user).getToken();
+        final String token = jwtTokenProvider.generateAccessToken(user).getToken();
 
         return new CredentialResponse(token);
     }

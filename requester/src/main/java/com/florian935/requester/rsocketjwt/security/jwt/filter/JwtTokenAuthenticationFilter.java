@@ -1,6 +1,6 @@
 package com.florian935.requester.rsocketjwt.security.jwt.filter;
 
-import com.florian935.requester.rsocketjwt.security.jwt.utils.TokenUtils;
+import com.florian935.requester.rsocketjwt.security.jwt.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Configuration;
@@ -21,15 +21,17 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class JwtTokenAuthenticationFilter implements WebFilter {
 
-    TokenUtils tokenUtils;
+    public static String BEARER_PREFIX = "Bearer ";
+
+    JwtTokenProvider jwtTokenProvider;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
 
         String token = resolveToken(exchange.getRequest());
 
-        if (StringUtils.hasText(token) && tokenUtils.isValidToken(token)) {
-            Authentication authentication = this.tokenUtils.getAuthenticationFromToken(token);
+        if (StringUtils.hasText(token) && jwtTokenProvider.isValidToken(token)) {
+            Authentication authentication = this.jwtTokenProvider.getAuthenticationFromToken(token);
 
             return chain
                     .filter(exchange)
@@ -43,8 +45,8 @@ public class JwtTokenAuthenticationFilter implements WebFilter {
 
         String bearerToken = request.getHeaders().getFirst(AUTHORIZATION);
 
-        if (StringUtils.hasText(bearerToken)) {
-            return bearerToken;
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(BEARER_PREFIX.length());
         }
 
         return null;

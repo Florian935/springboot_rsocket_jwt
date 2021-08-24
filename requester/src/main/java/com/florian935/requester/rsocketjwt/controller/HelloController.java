@@ -3,6 +3,7 @@ package com.florian935.requester.rsocketjwt.controller;
 import com.florian935.requester.rsocketjwt.domain.HelloRequest;
 import com.florian935.requester.rsocketjwt.domain.HelloRequests;
 import com.florian935.requester.rsocketjwt.domain.HelloResponse;
+import com.florian935.requester.rsocketjwt.security.jwt.filter.JwtTokenAuthenticationFilter;
 import com.florian935.requester.rsocketjwt.service.HelloService;
 import com.florian935.requester.rsocketjwt.utils.TypeConverter;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class HelloController {
     Mono<Void> fireAndForget(@PathVariable String id,
                              @AuthenticationPrincipal Authentication principal) {
 
-        final String token = TypeConverter.fromObjectToString(principal.getCredentials());
+        final String token = extractTokenFromBearerToken(principal.getCredentials());
 
         return helloService.fireAndForget(token, id);
     }
@@ -38,7 +39,7 @@ public class HelloController {
     Mono<HelloResponse> requestResponse(@RequestBody HelloRequest helloRequest,
                                         @AuthenticationPrincipal Authentication principal) {
 
-        final String token = TypeConverter.fromObjectToString(principal.getCredentials());
+        final String token = extractTokenFromBearerToken(principal.getCredentials());
 
         return helloService.requestResponse(token, helloRequest);
     }
@@ -47,7 +48,7 @@ public class HelloController {
     Flux<HelloResponse> requestStream(@RequestBody HelloRequests helloRequests,
                                       @AuthenticationPrincipal Authentication principal) {
 
-        final String token = TypeConverter.fromObjectToString(principal.getCredentials());
+        final String token = extractTokenFromBearerToken(principal.getCredentials());
 
         return helloService.requestStream(token, helloRequests);
     }
@@ -55,8 +56,13 @@ public class HelloController {
     @GetMapping(path = "channel", produces = TEXT_EVENT_STREAM_VALUE)
     Flux<HelloResponse> requestChannel(@AuthenticationPrincipal Authentication principal) {
 
-        final String token = TypeConverter.fromObjectToString(principal.getCredentials());
+        final String token = extractTokenFromBearerToken(principal.getCredentials());
 
         return helloService.requestChannel(token);
+    }
+
+    private String extractTokenFromBearerToken(Object token) {
+
+        return TypeConverter.fromObjectToString(token);
     }
 }
