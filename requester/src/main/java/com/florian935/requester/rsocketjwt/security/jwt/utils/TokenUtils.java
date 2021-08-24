@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.florian935.requester.rsocketjwt.domain.HelloUser;
 import com.florian935.requester.rsocketjwt.domain.UserToken;
+import io.netty.util.internal.StringUtil;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -87,7 +89,7 @@ public class TokenUtils {
 
         final User principal = new User(
                 JWT.decode(token).getClaim("username").asString(),
-                "",
+                StringUtil.EMPTY_STRING,
                 authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
