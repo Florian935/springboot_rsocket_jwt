@@ -13,11 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -35,8 +31,6 @@ public class TokenUtils {
     static long ACCESS_EXPIRE = 15;
     static String ACCESS_SECRET_KEY = "dfg39wLJ92kdI29084JJQjhsj98ksdfKSJnk91Kkjb87GGb898nbBbBBBbsdfkze2KFjksdfDNFSK";
     static Algorithm ACCESS_ALGORITHM = Algorithm.HMAC512(ACCESS_SECRET_KEY);
-    static MacAlgorithm MAC_ALGORITHM = MacAlgorithm.HS512;
-    static String HMAC_SHA_512 = "HmacSHA512";
 
     public UserToken generateToken(HelloUser user,
                                    Algorithm algorithm,
