@@ -38,7 +38,7 @@ public class Application {
 //
 //        final HelloUser user = HelloUser.builder()
 //                .userId(UUID.randomUUID().toString())
-//                .username("admin")
+//                .username("user")
 //                .password(passwordEncoder.encode("pass"))
 //                .role("USER")
 //                .build();
